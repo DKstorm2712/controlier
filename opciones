@@ -1,0 +1,65 @@
+import time
+import pygame
+import tkinter as tk 
+from threading import Thread
+
+mensaje = "es hora de estirar"
+# Inicializar pygame mixer
+pygame.mixer.init()
+
+# Cargar los sonidos
+sonidos_opcion1 = [
+    pygame.mixer.Sound("gaming_1.mp3"),
+    pygame.mixer.Sound("gaming_2.mp3"),
+    pygame.mixer.Sound("gaming_3.mp3"),
+    pygame.mixer.Sound("gaming_4.mp3")
+]
+
+sonidos_opcion2 = [
+    pygame.mixer.Sound("traabajo_2.mp3"),
+    pygame.mixer.Sound("trabajo_1.mp3"),
+    pygame.mixer.Sound("trabajo_3.mp3")
+]
+
+
+# Función para mostrar el pop-up
+def mostrar_popup(mensaje):
+    root = tk.Tk()
+    root.title("Recordatorio")
+    root.attributes("-topmost", True)  # Hacer que la ventana se sobreponga ante otras
+    label = tk.Label(root, text=mensaje, padx=20, pady=20)
+    label.pack()
+    button = tk.Button(root, text="Cerrar", command=root.destroy)
+    button.pack()
+    root.mainloop()
+
+# Función para reproducir sonidos
+def reproducir_sonidos(sonidos, intervalo, mensaje):
+    tiempo_inicial = time.time()
+    indice = 0
+    while True:
+        tiempo_actual = time.time()
+        if tiempo_actual - tiempo_inicial >= intervalo:
+            sonidos[indice].play()
+            indice = (indice + 1) % len(sonidos)
+            Thread(target=mostrar_popup, args=(mensaje,)).start()
+            tiempo_inicial = tiempo_actual
+        time.sleep(1)
+
+# Pedir entrada al usuario
+print("bienvenido a la aplicacion de bienestar fisico")
+print("elige una opcion de manejo de usuario:")
+print("1.-  modo gaming")
+print("2.-  modo trabajo")
+opcion = input("ingresa la opcion deseada----->")
+
+
+
+if opcion == "1":
+    print("el recordatorio sera cada 45 min para hacer estiramientos rapidos")
+    reproducir_sonidos(sonidos_opcion1, 2700, mensaje)  # 1 hora en segundos
+elif opcion == "2":
+    print("el recordatorio sera cada 1 hora con espacios de descanso y recomendaciones mas prolongadas")
+    reproducir_sonidos(sonidos_opcion2, 3600, mensaje)  # 2 horas en segundos
+else:
+    print("Opción no válida")
